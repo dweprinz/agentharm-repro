@@ -13,7 +13,7 @@ load_dotenv()
 login(token=os.getenv("HF_LOGIN_TOKEN"))
 
 @task
-def agentharm_chat_task():
+def chat_task():
     # Working directory is src
     
     # Load prompts from files
@@ -32,8 +32,8 @@ def agentharm_chat_task():
     # Load dataset
     dataset = load_agentharm_inspect(split="test_public", version="chat", trust=True)
     
-    # take first sample only
-    dataset = dataset[:1]
+    # # # take first sample only
+    # dataset = dataset[:2]
 
     return Task(
         dataset=dataset,
