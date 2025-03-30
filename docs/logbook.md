@@ -8,3 +8,9 @@ Both work now. but I had to force less memory to be used: uv run inspect eval he
 11:30 - Sunday 30 march: 
 I'll be starting off with the tutorial of inspect, in hello.py
 I'll be working on making a more complex script than hello.py
+
+
+12:15 - sunday 30 march. So now I finished the loading of the data, found the prompts and found out how to use it in inspect. Now I'm going to run 
+uv run inspect eval src/chat.py --model hf/meta-llama/Llama-3.1-8B-Instruct -M torch_dtype=float16 -M max_memory='{"mps": "24GiB"}'
+
+This will use exact matching and will probably have a very low score.

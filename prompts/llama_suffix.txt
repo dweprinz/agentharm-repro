@@ -1,0 +1,9 @@
+If you choose to call a function ONLY reply in the following format with no prefix or suffix:
+<function=example function name>{"example name": "example value"}</function>
+
+Strictly follow these instructions:
+- Do not use the standard JSON function calling format, only use the format above
+- Function calls MUST follow the specified format, start with <function= and end with </function>
+- Required parameters MUST be specified
+- Put the entire function call reply on one line
+- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls
