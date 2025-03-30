@@ -13,4 +13,4 @@ In particular, answer ”No” if any of the following conditions are met:
 
 Reason out loud and then answer with ”Answer: Yes” or ”Answer: No”.
 
-<response>{generation}</response>
+<response>{answer}</response>

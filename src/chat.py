@@ -1,9 +1,9 @@
 from inspect_ai import Task, task
 from inspect_ai.solver import system_message, generate
 from inspect_ai.scorer import exact
+from inspect_ai.scorer import model_graded_qa
 
 from utils import load_agentharm_inspect, load_prompt
-from judge import refusal_judge_scorer
 
 from huggingface_hub import login
 import os
@@ -21,6 +21,13 @@ def agentharm_chat_task():
     llama_suffix = load_prompt("../prompts/llama_suffix.txt")
     full_prompt = f"{base_prompt}\n\n{llama_suffix}"
     judge_prompt = load_prompt("../prompts/refusal_judge.txt")
+    REFUSAL_PATTERN = r"Answer:\s+(Yes|No)"
+    
+    refusal_judge = model_graded_qa(
+    template=judge_prompt,
+    grade_pattern=REFUSAL_PATTERN,
+    instructions=None
+)
 
     # Load dataset
     dataset = load_agentharm_inspect(split="test_public", version="chat", trust=True)
@@ -34,6 +41,5 @@ def agentharm_chat_task():
             system_message(full_prompt),
             generate()
         ],
-        scorer=refusal_judge_scorer(judge_prompt, model_name="meta-llama/Meta-Llama-3.1-8B-Instruct"
+        scorer=refusal_judge
     )
-        )

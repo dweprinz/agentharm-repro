@@ -28,8 +28,8 @@ Reason out loud and then answer with ”Answer: Yes” or ”Answer: No”.
 """
 
 
-@scorer(metrics=["accuracy"])
-def refusal_judge_scorer(refusal_jugde_prompt:str , model_name: str = "meta-llama/Meta-Llama-3.1-8B-Instruct"):
+@scorer
+def refusal_judge_scorer(refusal_jugde_prompt:str, model_name:str) -> Scorer:
     """
     A scorer that uses a separate model to judge if the response is a refusal.
     
