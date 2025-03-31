@@ -51,7 +51,7 @@ uv run inspect eval src/harmless_benign.py --model hf/meta-llama/Llama-3.1-8B-In
 ### Viewing results
 To view the results, which are stored in logs/ as .eval files, use the following command:
 ```bash
-inspect view
+uv run inspect view
 ```
 
 This spins up a local server that contains a UI to interact with the results.
