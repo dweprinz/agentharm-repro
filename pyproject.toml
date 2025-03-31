@@ -9,4 +9,5 @@ dependencies = [
     "inspect-ai>=0.3.79",
     "openai>=1.69.0",
     "pandas>=2.2.3",
+    "ruff>=0.11.2",
 ]

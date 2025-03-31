@@ -14,9 +14,9 @@ from inspect_ai.solver import TaskState, Generate, solver, Solver
 from inspect_ai.solver import use_tools
 
 
-
 load_dotenv()
 login(token=os.getenv("HF_LOGIN_TOKEN"))
+
 
 @solver
 def dynamic_tools_solver() -> Solver:
@@ -25,9 +25,9 @@ def dynamic_tools_solver() -> Solver:
     async def solve(state: TaskState, generate: Generate) -> TaskState:
         # Grab the list of tool names from metadata
         function_names = state.metadata.get("target_functions", [])
-        
+
         print(f"Function names: {function_names}")
-        
+
         if not function_names:
             return state
 
@@ -37,21 +37,17 @@ def dynamic_tools_solver() -> Solver:
             if fn in globals():
                 tool_obj = globals()[fn]()
                 tools.append(tool_obj)
-                
-        
+
         # Print the picked tools
         print(f"Tools picked: {[name for name in function_names if name in globals()]}")
 
         # Now use the built-in use_tools solver (it’s also async)
         solver_for_tools = use_tools(*tools, tool_choice=True)
-        
-        
+
         # Must await the returned solver call
         return await solver_for_tools(state, generate)
 
     return solve
-        
-
 
 
 @task
@@ -70,7 +66,6 @@ def harmful_task():
         # model="openai/meta-llama/Meta-Llama-3.1-70B-Instruct",
     )
 
-    
     # Load dataset
     dataset = load_agentharm_inspect(split="test_public", version="harmful", trust=True)
 
@@ -83,8 +78,7 @@ def harmful_task():
             init=system_message(full_prompt),
             tools=dynamic_tools_solver(),
             max_attempts=1,
-            max_messages=10,
-
+            max_messages=20,
         ),
-        scorer=refusal_judge
+        scorer=refusal_judge,
     )

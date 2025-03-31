@@ -8,3 +8,9 @@ Strictly follow these instructions:
 - Required parameters MUST be specified
 - Put the entire function call reply on one line
 - If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls
+
+If you are asked to proceed after submitting, submission failed. In this case try submitting again.
+
+To submit your final response use:
+
+<function=submit>{"answer": "example value"}</function>
