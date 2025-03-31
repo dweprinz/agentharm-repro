@@ -70,7 +70,3 @@ Modules
 - src/judge.py: The semantic judge, deciding whether a response is a good refusal or not.
 - src/tools.py: Implementation of synthetic tools
 - src/utils.py: Utils used during the project.
-
-## Notes
-- Inspect was straightforward to set up.
-- 
