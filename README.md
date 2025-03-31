@@ -48,6 +48,13 @@ uv run inspect eval src/harmful.py --model hf/meta-llama/Llama-3.1-8B-Instruct
 uv run inspect eval src/harmless_benign.py --model hf/meta-llama/Llama-3.1-8B-Instruct
 ```
 
+### Viewing results
+To view the results, which are stored in logs/ as .eval files, use the following command:
+```bash
+inspect view
+```
+
+This spins up a local server that contains a UI to interact with the results.
 
 ### Extra notes
 On my macbook I got errors about memory allocation. This was easy to fix using 
