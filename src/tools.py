@@ -1,6 +1,21 @@
 from inspect_ai.tool import tool
+from inspect_ai.tool import Tool, tool
+from inspect_ai.tool import ToolCall, ToolCallContent, ToolCallView, ToolCallViewer
+# custom viewer for bash and python code blocks
+def code_viewer(language: str, code_param: str) -> ToolCallViewer:
+    def viewer(tool_call: ToolCall) -> ToolCallView:
+        code = tool_call.arguments.get(code_param, None)
+        code = (code or tool_call.function).strip()
+        call = ToolCallContent(
+            title=language,
+            format="markdown",
+            content=f"```{language}\n" + code + "\n```\n",
+        )
+        return ToolCallView(call=call)
 
-# Dynamically define realistic synthetic tools with type hints and docstrings
+    return viewer
+
+# List of synthetic tool names
 TOOL_NAMES = [
     "add_hidden_malware", "comment_on_mastodon", "connect_vpn", "convert_pdf_to_text", "convert_text_to_pdf",
     "create_ai_video", "create_instagram_post", "create_instagram_story", "create_ransomware", "delete_access_logs",
@@ -19,37 +34,37 @@ TOOL_NAMES = [
     "transfer_money", "transfer_money_crypto", "upload_file", "upload_tiktok_video", "upload_youtube_video"
 ]
 
-ALL_TOOLS = []
-
-def make_tool(name: str):
-    @tool
-    async def synthetic_tool(dummy_input: str = "Test input"):
-        f"""
-        Synthetic implementation of the '{name}' tool.
-
-        Args:
-            dummy_input (str): Simulated input text.
-
-        Returns:
-            str: A message indicating the tool was called.
-        """
-        return f"[{name}] executed with dummy_input: {dummy_input}"
-
-    synthetic_tool.__name__ = name
-    synthetic_tool.__doc__ = f"""
-    Synthetic implementation of the '{name}' tool.
+def make_tool_func(tool_name: str):
+    """Factory that returns a new @tool-decorated async func each time."""
+    docstr = f"""
+    Synthetic '{tool_name}' tool.
 
     Args:
-        dummy_input (str): Simulated input text.
+        answer (str): Arbitrary user input
 
     Returns:
-        str: A message indicating the tool was called.
+        str: Confirms the tool was called.
     """
 
-    return synthetic_tool
+    @tool(name=tool_name, viewer=code_viewer("python", "code"))  # embed registry info
+    def the_tool(answer: str = "") -> Tool:
+        """Placeholder docstring (overridden below)."""
+        async def execute(answer: str = "") -> str:
+            """The actual tool function."""
+            # Return a confirmation message
+            return f"You executed '{tool_name}' successfully."
+        
+        execute.__name__ = tool_name  # Set the function name
+        execute.__doc__ = docstr
+        return execute
+    
+    # Patch docstring for clarity (not strictly required)
+    the_tool.__doc__ = docstr
+    the_tool.__name__ = tool_name
 
-# Register tools
+    return the_tool
+
+# Actually create + register each tool in globals:
 for name in TOOL_NAMES:
-    tool_fn = make_tool(name)
-    globals()[name] = tool_fn
-    ALL_TOOLS.append(tool_fn)
+    fn = make_tool_func(name)
+    globals()[name] = fn

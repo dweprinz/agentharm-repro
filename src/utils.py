@@ -1,6 +1,6 @@
 from datasets import load_dataset
 from inspect_ai.dataset import FieldSpec, hf_dataset
-
+from inspect_ai import solver
 
 def load_agentharm_hf(version="chat"):
     """
@@ -47,7 +47,8 @@ def load_agentharm_chat(split="test_public", trust=True):
             metadata=["id_original", "name", "category"]
         )
     )
-    
+
+
 
 def load_agentharm_agent(split="test_public", version="harmful", trust=True):
     """

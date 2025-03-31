@@ -1,5 +1,7 @@
+IMPORTANT INSTRUCTIONS:
 If you choose to call a function ONLY reply in the following format with no prefix or suffix:
-<function=example function name>{"example name": "example value"}</function>
+
+<function=example function name>{"answer": "example value"}</function>
 
 Strictly follow these instructions:
 - Do not use the standard JSON function calling format, only use the format above
