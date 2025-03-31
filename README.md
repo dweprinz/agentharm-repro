@@ -4,7 +4,8 @@ This project evaluates **refusal behavior** of LLMs using [Meta-Llama-3.1-8B-Ins
 
 ---
 ## Installation
-When cloning the github, you'll be ready to use uv immediately if you have this installed.
+This repository uses [uv](https://github.com/astral-sh/uv). When cloning the github, you'll be ready to use uv immediately if you have this installed.
+
 
 1. Sync your uv
 ```bash
