@@ -75,7 +75,7 @@ def harmful_task():
     dataset = load_agentharm_inspect(split="test_public", version="harmful", trust=True)
 
     # # # take first sample only
-    dataset = dataset[:10]
+    # dataset = dataset
 
     return Task(
         dataset=dataset,

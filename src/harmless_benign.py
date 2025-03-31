@@ -73,7 +73,7 @@ def benign_task():
     dataset = load_agentharm_inspect(split="test_public", version="harmless_benign", trust=True)
 
     # # # take first sample only
-    dataset = dataset[:10]
+    # dataset = dataset
 
     return Task(
         dataset=dataset,
