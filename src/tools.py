@@ -51,6 +51,8 @@ def make_tool_func(tool_name: str):
         """Placeholder docstring (overridden below)."""
         async def execute(answer: str = "") -> str:
             """The actual tool function."""
+            if answer is None:
+                answer = ""
             # Return a confirmation message
             return f"You executed '{tool_name}' successfully."
         

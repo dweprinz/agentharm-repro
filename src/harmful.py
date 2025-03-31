@@ -5,6 +5,7 @@ from inspect_ai.scorer import model_graded_qa
 
 from utils import load_agentharm_inspect, load_prompt
 
+
 from tools import *
 from huggingface_hub import login
 import os
@@ -12,48 +13,42 @@ from dotenv import load_dotenv
 from inspect_ai.solver import TaskState, Generate, solver, Solver
 from inspect_ai.solver import use_tools
 
-from inspect_ai.tool import python as python_tool  # or your custom Tool wrapper
-
 
 
 load_dotenv()
 login(token=os.getenv("HF_LOGIN_TOKEN"))
 
-    
-# @solver
-# def provide_sample_tools() -> Solver:
-#     def solve(state: TaskState, generate: Generate) -> TaskState:
-#         functions = state.metadata.get("target_functions", [])
-#         tools = [python_tool(f) for f in functions]  # or build Tool from dict
-#         return use_tools(*tools)(state, generate)
-#     return solve
-
 @solver
-def dynamic_tools_solver(**params) -> Solver:
-    """
-    This solver dynamically loads tools based on the metadata of the task.
-    It retrieves the function names from the metadata and creates tools for them.
-    
-    Returns:
-    A solver that inserts the tools into the task state.
-    """
+def dynamic_tools_solver() -> Solver:
+    """A solver *factory* that returns an async solve() function for dynamic tools."""
+
     async def solve(state: TaskState, generate: Generate) -> TaskState:
-        """
-
-        Args:
-            state (TaskState): 
-            generate (Generate): 
-
-        Returns:
-            TaskState: 
-        """
-        kwargs = state.metadata
-        function_names = kwargs.get("target_functions", [])
-
-        tools_objs = [globals()[name] for name in function_names]
-        state = use_tools(*tools_objs)(state, generate)
+        # Grab the list of tool names from metadata
+        function_names = state.metadata.get("target_functions", [])
         
-        return state
+        print(f"Function names: {function_names}")
+        
+        if not function_names:
+            return state
+
+        # Convert each function name into an actual python_tool
+        tools = []
+        for fn in function_names:
+            if fn in globals():
+                tool_obj = globals()[fn]()
+                tools.append(tool_obj)
+                
+        
+        # Print the picked tools
+        print(f"Tools picked: {[name for name in function_names if name in globals()]}")
+
+        # Now use the built-in use_tools solver (it’s also async)
+        solver_for_tools = use_tools(*tools, tool_choice=True)
+        
+        
+        # Must await the returned solver call
+        return await solver_for_tools(state, generate)
+
     return solve
         
 
@@ -71,7 +66,8 @@ def harmful_task():
     refusal_judge = model_graded_qa(
         template=judge_prompt,
         grade_pattern=r"Answer:\s+(Yes|No)",
-        instructions=None
+        instructions=None,
+        # model="openai/meta-llama/Meta-Llama-3.1-70B-Instruct",
     )
 
     
@@ -86,7 +82,9 @@ def harmful_task():
         solver=basic_agent(
             init=system_message(full_prompt),
             tools=dynamic_tools_solver(),
-            max_attempts=1
+            max_attempts=1,
+            max_messages=10,
+
         ),
         scorer=refusal_judge
     )

@@ -2,7 +2,6 @@ from inspect_ai import Task, task
 from inspect_ai.solver import system_message
 from inspect_ai.solver import basic_agent
 from inspect_ai.scorer import model_graded_qa
-from inspect_ai.util import sandbox
 
 from utils import load_agentharm_inspect, load_prompt
 
@@ -19,14 +18,6 @@ from inspect_ai.solver import use_tools
 load_dotenv()
 login(token=os.getenv("HF_LOGIN_TOKEN"))
 
-    
-# @solver
-# def provide_sample_tools() -> Solver:
-#     def solve(state: TaskState, generate: Generate) -> TaskState:
-#         functions = state.metadata.get("target_functions", [])
-#         tools = [python_tool(f) for f in functions]  # or build Tool from dict
-#         return use_tools(*tools)(state, generate)
-#     return solve
 
 @solver
 def dynamic_tools_solver() -> Solver:
@@ -95,7 +86,7 @@ def test_tool_task():
             init=system_message(full_prompt),
             tools=dynamic_tools_solver(),
             max_attempts=1,
-            # max_messages=5,
+            max_messages=10,
 
         ),
         # sandbox="local",
